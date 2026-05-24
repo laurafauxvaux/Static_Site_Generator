@@ -1,5 +1,5 @@
 import unittest
-from markdown_parser import split_nodes_delimiter
+from markdown_parser import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 from textnode import TextNode, TextType
 
 class TestMarkdownParser(unittest.TestCase):
@@ -44,3 +44,31 @@ class TestMarkdownParser(unittest.TestCase):
             nodes = [TextNode("This is plain text", TextType.TEXT),
                     TextNode("This is **bold text", TextType.TEXT)]
             split_nodes_delimiter(nodes, "**", TextType.BOLD)
+
+    def test_extract_markdown_image(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)")
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+    
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png), and this is a ![picture](cat.png)")
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png"), ("picture", "cat.png")], matches)
+    
+    def test_extract_markdown_link(self):
+        matches = extract_markdown_links(
+            "This is text with a [link](https://google.com)")
+        self.assertListEqual([("link", "https://google.com")], matches)
+    
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "This is text with a [link](https://google.com), you may also use [second_link](https://yahoo.fr)")
+        self.assertListEqual([("link", "https://google.com"), ("second_link", "https://yahoo.fr")], matches)
+
+    def test_extract_markdown_image_without_url(self):
+        matches = extract_markdown_images("![image]")
+        self.assertListEqual([], matches)
+
+    def test_extract_markdown_links_lookbehind(self):
+        matches = extract_markdown_links("[url](https://google.com), ![image](https://i.imgur.com/zjjcJKZ.png)")
+        self.assertListEqual([("url", "https://google.com")], matches)
