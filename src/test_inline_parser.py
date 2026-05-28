@@ -1,8 +1,14 @@
 import unittest
-from markdown_parser import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link
+from inline_parser import (
+    split_nodes_delimiter, 
+    extract_markdown_images, 
+    extract_markdown_links, 
+    split_nodes_image, 
+    split_nodes_link, 
+    text_to_textnodes)
 from textnode import TextNode, TextType
 
-class TestMarkdownParser(unittest.TestCase):
+class TestInlineParser(unittest.TestCase):
     def test_split_bold_text(self):
         nodes = [TextNode("This is plain text", TextType.TEXT),
                  TextNode("This is **bold text**", TextType.TEXT)]
@@ -122,3 +128,41 @@ class TestMarkdownParser(unittest.TestCase):
         new_nodes = split_nodes_link([node])
         self.assertListEqual([TextNode("link", TextType.LINK, "https://google.com"),
                               TextNode("second link", TextType.LINK, "https://yahoo.fr"),],new_nodes,)
+        
+    def test_text_to_textnodes_all_texttypes(self):
+        text = ("This is **text** "
+        "with an _italic_ word "
+        "and a `code block` "
+        "and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) "
+        "and a [link](https://boot.dev)")
+        self.assertEqual(text_to_textnodes(text),
+                         [
+                            TextNode("This is ", TextType.TEXT),
+                            TextNode("text", TextType.BOLD),
+                            TextNode(" with an ", TextType.TEXT),
+                            TextNode("italic", TextType.ITALIC),
+                            TextNode(" word and a ", TextType.TEXT),
+                            TextNode("code block", TextType.CODE),
+                            TextNode(" and an ", TextType.TEXT),
+                            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                            TextNode(" and a ", TextType.TEXT),
+                            TextNode("link", TextType.LINK, "https://boot.dev"),
+                            ]
+        )
+    
+    def test_text_to_textnodes_no_markdown(self):
+        text = "This is a text with no markdown and a period."
+        self.assertEqual(text_to_textnodes(text),
+                        [TextNode("This is a text with no markdown and a period.", TextType.TEXT)])
+    
+    def test_text_to_textnodes_double_bold(self):
+        text = "This **is** a **text** with two bold words and a period."
+        self.assertEqual(text_to_textnodes(text),
+                        [
+                        TextNode("This ", TextType.TEXT),
+                        TextNode("is", TextType.BOLD),
+                        TextNode(" a ", TextType.TEXT),
+                        TextNode("text", TextType.BOLD),
+                        TextNode(" with two bold words and a period.", TextType.TEXT)
+                        ]
+        )

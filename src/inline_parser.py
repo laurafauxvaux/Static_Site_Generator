@@ -3,7 +3,6 @@ from textnode import TextNode, TextType
 
 def split_nodes_delimiter(old_nodes:list[TextNode], delimiter:str, text_type:TextType) ->list[TextNode]:
     result = []
-    to_check = []
 
     if not isinstance(delimiter, str) or delimiter == "":
         raise ValueError("Delimiter must be a non-empty string")
@@ -12,23 +11,17 @@ def split_nodes_delimiter(old_nodes:list[TextNode], delimiter:str, text_type:Tex
         if node.text_type != TextType.TEXT:
             result.append(node)
         else:
-            to_check.append(node)
+            new_nodes = []
+            split_text = node.text.split(delimiter)
 
-    if not to_check:
-        return result
-    
-    for node in to_check:
-        new_nodes = []
-        split_text = node.text.split(delimiter)
-
-        if len(split_text) % 2 == 0:
-            raise Exception("A delimiter wasn't closed: invalid Markdown syntax")
-        for i in range(len(split_text)):
-            if i % 2 == 0:
-                new_nodes.append(TextNode(split_text[i], TextType.TEXT))
-            else:
-                new_nodes.append(TextNode(split_text[i], text_type))
-        result.extend(new_nodes)
+            if len(split_text) % 2 == 0:
+                raise Exception("A delimiter wasn't closed: invalid Markdown syntax")
+            for i in range(len(split_text)):
+                if i % 2 == 0:
+                    new_nodes.append(TextNode(split_text[i], TextType.TEXT))
+                else:
+                    new_nodes.append(TextNode(split_text[i], text_type))
+            result.extend(new_nodes)
 
     return result
 
@@ -48,7 +41,7 @@ def split_nodes_image(old_nodes:list[TextNode]) -> list[TextNode]:
         
         current_text = initial_text 
         if not extracted_image:
-            result.append(TextNode(current_text, TextType.TEXT))
+            result.append(node)
         else:  
             for img in extracted_image:             
                 img_alt = img[0]
@@ -79,7 +72,7 @@ def split_nodes_link(old_nodes:list[TextNode]) -> list[TextNode]:
         
         current_text = initial_text 
         if not extracted_links:
-            result.append(TextNode(current_text, TextType.TEXT))
+            result.append(node)
         else:  
             for link in extracted_links:             
                 href = link[0]
@@ -99,3 +92,16 @@ def split_nodes_link(old_nodes:list[TextNode]) -> list[TextNode]:
                 result.append(TextNode(current_text, TextType.TEXT))
 
     return result
+
+def text_to_textnodes(text:str)->list[TextNode]:
+    nodes = []
+    text_node = TextNode(text, TextType.TEXT)
+    nodes.append(text_node)
+    split_bold = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+    split_italic = split_nodes_delimiter(split_bold, "_", TextType.ITALIC)
+    split_code = split_nodes_delimiter(split_italic, "`", TextType.CODE)
+    split_image = split_nodes_image(split_code)
+    split_link = split_nodes_link(split_image)
+    final_split = split_link
+    return final_split
+
