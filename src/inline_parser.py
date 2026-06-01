@@ -17,10 +17,11 @@ def split_nodes_delimiter(old_nodes:list[TextNode], delimiter:str, text_type:Tex
             if len(split_text) % 2 == 0:
                 raise Exception("A delimiter wasn't closed: invalid Markdown syntax")
             for i in range(len(split_text)):
-                if i % 2 == 0:
-                    new_nodes.append(TextNode(split_text[i], TextType.TEXT))
-                else:
-                    new_nodes.append(TextNode(split_text[i], text_type))
+                if split_text[i] != "":
+                    if i % 2 == 0:
+                        new_nodes.append(TextNode(split_text[i], TextType.TEXT))
+                    else:
+                        new_nodes.append(TextNode(split_text[i], text_type))
             result.extend(new_nodes)
 
     return result

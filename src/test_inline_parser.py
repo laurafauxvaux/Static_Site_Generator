@@ -16,8 +16,7 @@ class TestInlineParser(unittest.TestCase):
         self.assertEqual(result, [TextNode("This is plain text", TextType.TEXT, None),
                          TextNode("This is ", TextType.TEXT, None),
                          TextNode("bold text", TextType.BOLD, None),
-                         TextNode("", TextType.TEXT, None)
-                         ])
+                          ])
     
     def test_split_italic_text(self):
         nodes = [TextNode("This is plain text", TextType.TEXT),
@@ -26,7 +25,6 @@ class TestInlineParser(unittest.TestCase):
         self.assertEqual(result, [TextNode("This is plain text", TextType.TEXT, None),
                          TextNode("This is ", TextType.TEXT, None),
                          TextNode("italic text", TextType.ITALIC, None),
-                         TextNode("", TextType.TEXT, None)
                          ])
         
     def test_split_code_text(self):
@@ -36,7 +34,6 @@ class TestInlineParser(unittest.TestCase):
         self.assertEqual(result, [TextNode("This is plain text", TextType.TEXT, None),
                             TextNode("This is ", TextType.TEXT, None),
                             TextNode("code", TextType.CODE, None),
-                            TextNode("", TextType.TEXT, None)
                             ])
     
     def test_err_delimiter_not_str(self):
