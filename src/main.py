@@ -1,5 +1,3 @@
-from textnode import TextNode, TextType
-from htmlnode import HTMLNode
 import os
 import shutil
         
@@ -18,6 +16,8 @@ def copy_static_to_public(static_path:str, public_path:str):
                 shutil.copy(complete_path, public_path)
                 print(complete_path)
 
+
+           
 
 def main():
     if os.path.exists('./public'):

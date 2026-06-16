@@ -134,7 +134,14 @@ def markdown_to_html_node(markdown:str)->ParentNode:
     parent_node = ParentNode("div", children)
     return parent_node
             
-    
+
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+       if block_to_block_type(block) == BlockType.HEADING:
+           if block.startswith("# "):
+               return block[2:].strip()
+    raise Exception("No header in this markdown file")
     
 
 
