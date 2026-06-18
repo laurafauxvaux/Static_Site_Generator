@@ -1,9 +1,11 @@
 import os
 import shutil
+from htmlnode import HTMLNode
+from page_generator import generate_page
+from block_parser import block_to_block_type
         
 
 def copy_static_to_public(static_path:str, public_path:str):
-    
     if os.path.exists(static_path):
         current_path = static_path
         for item in os.listdir(static_path):
@@ -17,13 +19,13 @@ def copy_static_to_public(static_path:str, public_path:str):
                 print(complete_path)
 
 
-           
 
 def main():
     if os.path.exists('./public'):
         shutil.rmtree('./public')
     os.mkdir('./public')
     copy_static_to_public('./static', './public')
+    generate_page('./content/index.md', './template.html', './public/index.html')
 
 
 if __name__ == "__main__":

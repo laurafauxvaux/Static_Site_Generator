@@ -40,7 +40,7 @@ def block_to_block_type(markdown_text:str)->BlockType:
         sections = markdown_text.split("\n")
         if (
             all(section.startswith(">") for section in sections)
-            and all(section[1:].strip() != "" for section in sections)
+            and any(section[1:].strip() != "" for section in sections)
         ):
             return BlockType.QUOTE
         return BlockType.PARAGRAPH
@@ -102,7 +102,8 @@ def _ordered_list_to_html_node(text:str)->ParentNode:
     sections = text.split("\n")
     children = []
     for section in sections:
-        grandchildren = _text_to_children(section[1:].strip())
+        number, content = section.split(" ", 1)
+        grandchildren = _text_to_children(content.strip())
         children.append(ParentNode("li", grandchildren))
     return ParentNode("ol", children)
 
@@ -135,13 +136,6 @@ def markdown_to_html_node(markdown:str)->ParentNode:
     return parent_node
             
 
-def extract_title(markdown):
-    blocks = markdown_to_blocks(markdown)
-    for block in blocks:
-       if block_to_block_type(block) == BlockType.HEADING:
-           if block.startswith("# "):
-               return block[2:].strip()
-    raise Exception("No header in this markdown file")
     
 
 

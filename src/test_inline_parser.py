@@ -33,7 +33,7 @@ class TestInlineParser(unittest.TestCase):
         result = split_nodes_delimiter(nodes, "`", TextType.CODE)
         self.assertEqual(result, [TextNode("This is plain text", TextType.TEXT, None),
                             TextNode("This is ", TextType.TEXT, None),
-                            TextNode("code", TextType.CODE, None),
+                            TextNode("code", TextType.CODE, None)
                             ])
     
     def test_err_delimiter_not_str(self):

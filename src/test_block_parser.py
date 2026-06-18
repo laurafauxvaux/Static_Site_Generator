@@ -2,9 +2,7 @@ import unittest
 from block_parser import (markdown_to_blocks, 
                           block_to_block_type,
                           markdown_to_html_node,
-                          extract_title,
                           BlockType)
-from inline_parser import text_to_textnodes
 
 class TestBlockParser(unittest.TestCase):
     def test_markdown_to_blocks(self):
@@ -201,40 +199,15 @@ And a little paragraph to ensure the separation
 2. Check [link](https://boot.dev)
 
 3. Now get to work
+
+10. and test with double digits
 """
         node = markdown_to_html_node(md)
     
         html = node.to_html()
         self.assertEqual(
         html,
-        "<div><ol><li>Open browser</li><li>Check <a href='https://boot.dev'>link</a></li><li>Now get to work</li></ul></div>",
+        "<div><ol><li>Open browser</li><li>Check <a href='https://boot.dev'>link</a></li><li>Now get to work</li><li>and test with double digits</li></ul></div>",
         )
     
-    def extract_title_two_headings(self):
-        md = """
-# should only extract h1 heading
 
-### should not extract h3 heading
-""" 
-        result = extract_title(md)
-        self.assertEqual(result, "should only extract h1 heading")
-    
-    def extract_title_different_blocks(self):
-        md = """
-Putting some paragraph
-
-- list 1
-
-- list 2
-
-# to check heading
-"""
-        result = extract_title(md)
-        self.assertEqual(result, "to check heading")
-    
-    def extract_title_err_no_h1(self):
-        md = """
-### no h1 heading here
-"""
-        with self.assertRaises(Exception):
-            extract_title(md)
