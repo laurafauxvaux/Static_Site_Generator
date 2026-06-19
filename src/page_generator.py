@@ -48,13 +48,13 @@ def generate_pages_recursive(dir_path_content:str, template_path:str, dest_dir_p
             if os.path.isdir(complete_path):
                 dst_child = os.path.join(dest_dir_path, item)
                 os.mkdir(dst_child)
-                generate_pages_recursive(complete_path, template_path, dst_child)
+                generate_pages_recursive(complete_path, template_path, dst_child, basepath)
             elif os.path.isfile(complete_path):
                 p = Path(complete_path)
                 if p.suffix == ".md":
                     html_item = p.stem + ".html"
                     dest_path = os.path.join(dest_dir_path, html_item)
-                    generate_page(complete_path, template_path, dest_path)
+                    generate_page(complete_path, template_path, dest_path, basepath)
 
 
         

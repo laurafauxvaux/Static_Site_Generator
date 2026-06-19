@@ -21,11 +21,11 @@ def copy_static_to_public(static_path:str, public_path:str):
 
 def main():
     basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
-    if os.path.exists('./public'):
-        shutil.rmtree('./public')
-    os.mkdir('./public')
-    copy_static_to_public('./static', './public')
-    generate_pages_recursive('./content', './template.html', './public', basepath)
+    if os.path.exists('./docs'):
+        shutil.rmtree('./docs')
+    os.mkdir('./docs')
+    copy_static_to_public('./static', './docs')
+    generate_pages_recursive('./content', './template.html', './docs', basepath)
     
     
 
