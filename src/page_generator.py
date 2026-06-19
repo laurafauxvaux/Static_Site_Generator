@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from block_parser import (BlockType,
                           block_to_block_type,
                           markdown_to_blocks, 
@@ -37,4 +38,21 @@ def generate_page(from_path:str, template_path:str, dest_path:str):
     os.makedirs(target_directory, exist_ok=True)
     with open(dest_path, "w") as f:
         f.write(final_html)
+
+def generate_pages_recursive(dir_path_content:str, template_path:str, dest_dir_path:str):
+    if os.path.exists(dir_path_content):
+        for item in os.listdir(dir_path_content):
+            complete_path = os.path.join(dir_path_content, item)
+            if os.path.isdir(complete_path):
+                dst_child = os.path.join(dest_dir_path, item)
+                os.mkdir(dst_child)
+                generate_pages_recursive(complete_path, template_path, dst_child)
+            elif os.path.isfile(complete_path):
+                p = Path(complete_path)
+                if p.suffix == ".md":
+                    html_item = p.stem + ".html"
+                    dest_path = os.path.join(dest_dir_path, html_item)
+                    generate_page(complete_path, template_path, dest_path)
+
+
         
